@@ -452,12 +452,12 @@
         player.playVideo();
     });
 
-    // Speed stepper: minus/plus move between steps. First dropped to 0.7x
-    // (30% slower), then another 30 points slower still, landing the
-    // starting/"normal" speed at 0.4x instead of 1x. The ×/－ buttons still
-    // work the same way around that new baseline.
-    const speedSteps = [0.25, 0.4, 0.55, 0.7, 0.85];
-    let speedIndex = 1; // 0.4x, the new default
+    // Speed stepper: minus/plus move between steps. Slowed down in three
+    // rounds (30 points, then 30 more, then 25 more) landing the
+    // starting/"normal" speed at 0.15x instead of 1x. The ×/－ buttons
+    // still work the same way around that new baseline.
+    const speedSteps = [0.15, 0.3, 0.45, 0.6, 0.75];
+    let speedIndex = 0; // 0.15x, the new default
     const speedMinusBtn = document.getElementById('speed-minus');
     const speedPlusBtn = document.getElementById('speed-plus');
     const speedResetBtn = document.getElementById('speed-reset');
@@ -466,14 +466,14 @@
         speedIndex = Math.max(0, Math.min(speedSteps.length - 1, index));
         const rate = speedSteps[speedIndex];
         player.setPlaybackRate(rate);
-        const isNormal = rate === 0.4;
+        const isNormal = rate === 0.15;
         speedResetBtn.textContent = isNormal ? 'מהירות' : `×${rate}`;
         speedResetBtn.classList.toggle('is-normal', isNormal);
     }
 
     speedMinusBtn.addEventListener('click', () => applySpeed(speedIndex - 1));
     speedPlusBtn.addEventListener('click', () => applySpeed(speedIndex + 1));
-    speedResetBtn.addEventListener('click', () => applySpeed(1));
+    speedResetBtn.addEventListener('click', () => applySpeed(0));
     // Apply the default rate right away — earlier pages never needed this
     // because 1x already matched the <video>/YouTube element's own default.
     applySpeed(speedIndex);
