@@ -907,24 +907,34 @@
     // neighboring natural's height — same convention as the falling-note
     // lane and the physical black keys.
     const STAFF_PITCH_Y = { C: 60, D: 54, E: 48, F: 42, G: 36, A: 30, B: 24 };
-    const STAFF_NOTE_SPACING = 46;
 
     function buildStaff() {
         staffInner.innerHTML = '';
         staffNoteEls.length = 0;
+        // The notation itself only spans ~60px (C4's ledger line down to F5),
+        // but the wrap is however tall the falling-lane would have been
+        // (up to 150px) — center the staff within that instead of pinning
+        // it to the top, so it isn't cramped into a thin strip.
+        const wrapH = staffWrap.clientHeight || 150;
+        const offsetY = Math.max(10, (wrapH - 60) / 2);
         [0, 12, 24, 36, 48].forEach(y => {
             const line = document.createElement('div');
             line.className = 'staff-line';
-            line.style.top = y + 'px';
+            line.style.top = (y + offsetY) + 'px';
             staffInner.appendChild(line);
         });
         const whiteWpx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--white-w')) || 50;
         const noteSize = whiteWpx * 0.5;
-        staffInner.style.width = (songNotes.length * STAFF_NOTE_SPACING + 40) + 'px';
+        // A fixed gap regardless of note size would either crowd them
+        // together or leave the staff lines invisible between big circles
+        // (or waste space between small ones) — scale the spacing with the
+        // circles themselves instead.
+        const spacing = noteSize * 1.35;
+        staffInner.style.width = (songNotes.length * spacing + 40) + 'px';
         songNotes.forEach((n, i) => {
             const letter = n.note[0];
-            const y = STAFF_PITCH_Y[letter];
-            const x = 30 + i * STAFF_NOTE_SPACING;
+            const y = STAFF_PITCH_Y[letter] + offsetY;
+            const x = 30 + i * spacing;
             if (letter === 'C') {
                 const ledger = document.createElement('div');
                 ledger.className = 'staff-ledger';
