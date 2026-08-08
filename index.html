@@ -989,6 +989,12 @@
             staffNoteEls.forEach(el => el.classList.remove('done'));
             buildStaff();
             dismissPracticeHint();
+            // Leftover state from the timed practice mode — a green "due"
+            // outline stuck on whatever key was up when the song paused,
+            // and water levels from that earlier attempt — shouldn't carry
+            // into a fresh "לנסות לבד" attempt.
+            Object.values(keyByNote).forEach(el => el.classList.remove('due'));
+            resetKeyFills();
         }
         sizeKeys();
     });
