@@ -260,10 +260,6 @@
         .staff-note-avatar img { width: 100%; height: 100%; object-fit: contain; display: block; }
         /* The note the child should press next — a soft green outline, same
            family as the falling-lane's own "due" highlight. */
-        .staff-note.current .staff-note-avatar {
-            border-color: #4caf50;
-            box-shadow: 0 0 10px 3px rgba(76,175,80,0.75);
-        }
         /* Already played correctly — lights up teal and stays lit, so the
            child can see their progress through the whole line at a glance. */
         .staff-note.done .staff-note-avatar {
@@ -971,8 +967,10 @@
         if (el) el.classList.add('done');
     }
 
+    // No green "play this next" hint — the point of "לנסות לבד" is reading
+    // the staff independently, not being told which note comes next. Still
+    // auto-scrolls so the child's progress through the line stays in view.
     function updateStaffCurrent() {
-        staffNoteEls.forEach((el, i) => el.classList.toggle('current', i === soloIdx));
         const cur = staffNoteEls[soloIdx];
         if (cur) cur.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
     }
