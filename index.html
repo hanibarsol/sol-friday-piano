@@ -837,6 +837,7 @@
     const activeTiles = new Map();
 
     function renderFallingLane(t) {
+        if (soloMode) return;
         const laneH = noteLane.clientHeight;
         if (!laneH) return;
         const whiteWpx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--white-w')) || 0;
@@ -948,6 +949,7 @@
             }
             const note = document.createElement('div');
             note.className = 'staff-note';
+            if (i < soloIdx) note.classList.add('done');
             note.style.left = x + 'px';
             note.style.top = y + 'px';
             note.style.width = noteSize + 'px';
@@ -1002,6 +1004,8 @@
             // into a fresh "לנסות לבד" attempt.
             Object.values(keyByNote).forEach(el => el.classList.remove('due'));
             resetKeyFills();
+            activeTiles.forEach(tile => tile.remove());
+            activeTiles.clear();
         }
         sizeKeys();
     });
@@ -1040,7 +1044,7 @@
         // staff view (which replaces it) doesn't shift the piano's height.
         document.documentElement.style.setProperty('--staff-h', laneH + 'px');
     }
-    window.addEventListener('resize', sizeKeys);
+    window.addEventListener('resize', () => { sizeKeys(); if (soloMode) buildStaff(); });
     sizeKeys();
     window.addEventListener('load', sizeKeys);
     requestAnimationFrame(sizeKeys);
